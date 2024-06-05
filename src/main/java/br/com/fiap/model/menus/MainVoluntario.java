@@ -26,6 +26,8 @@ public class MainVoluntario {
 				"Sair" };
 		int selectedOptionIndex;
 		do {
+			UIManager.put("OptionPane.minimumSize", new Dimension(500, 50));
+			UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("SanSerif", Font.ROMAN_BASELINE, 18)));
 			selectedOptionIndex = JOptionPane.showOptionDialog(null, "Escolha uma opção:", "Menu de Voluntário",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
@@ -110,8 +112,7 @@ public class MainVoluntario {
 			}
 
 			case 3: {
-				UIManager.put("OptionPane.minimumSize", new Dimension(500, 50));
-				UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("SanSerif", Font.ROMAN_BASELINE, 18)));
+				
 				List<Voluntario> voluntarios = gerenciadorVoluntario.listarVoluntarios();
 				StringBuilder voluntariosText = new StringBuilder();
 				for (Voluntario voluntario : voluntarios) {

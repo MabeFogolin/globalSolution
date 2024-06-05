@@ -13,7 +13,7 @@ public class Usuario {
 	private int userIdade;
 	private String userEmail;
 	private String userSenha;
-	private long userCep;
+	private String userCep;
 	private int fkOceanis; //Chave estrangeira do menu
 	
 	
@@ -41,10 +41,10 @@ public class Usuario {
 	public void setUserSenha(String userSenha) {
 		this.userSenha = userSenha;
 	}
-	public long getUserCep() {
+	public String getUserCep() {
 		return userCep;
 	}
-	public void setUserCep(long userCep) {
+	public void setUserCep(String userCep) {
 		this.userCep = userCep;
 	}
 	public int getFkOceanis() {
@@ -58,13 +58,13 @@ public class Usuario {
 	
 	}
 	
-	public Usuario(String userNome, int userIdade, String userEmail, long userCep) {
+	public Usuario(String userNome, int userIdade, String userEmail, String userCep) {
 		this.userNome = userNome;
 		this.userIdade = userIdade;
 		this.userEmail = userEmail;
 		this.userCep = userCep;
 	}
-	public Usuario(String userNome, int userIdade, String userEmail, String userSenha, long userCep, int fkOceanis) {
+	public Usuario(String userNome, int userIdade, String userEmail, String userSenha, String userCep, int fkOceanis) {
 		this.userNome = userNome;
 		this.userIdade = userIdade;
 		this.userEmail = userEmail;
@@ -74,8 +74,8 @@ public class Usuario {
 	}
 	@Override
 	public String toString() {
-		return "Usuario: " + userNome + "\nIdade: " + userIdade + "\nuserEmail: " + userEmail
-				+"\nCep: " + userCep + "\n";
+		return "Usuario: " + userNome + " Idade: " + userIdade + " Email: " + userEmail
+				+" Cep: " + userCep + "\n";
 	}
 	
 	 

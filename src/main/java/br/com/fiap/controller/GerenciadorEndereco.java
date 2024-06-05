@@ -21,7 +21,7 @@ public class GerenciadorEndereco {
 	}
 
 	public boolean adicionarEndereco(Endereco endereco) {
-		String sql = "INSERT INTO EnderecoViaCep (fk_usuario, cidade, rua, uf) VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO Endereco (fk_usuario, cidade, rua, uf) VALUES (?, ?, ?, ?)";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, endereco.getFkUsuario());
 			ps.setString(2, endereco.getCidade());
@@ -37,7 +37,7 @@ public class GerenciadorEndereco {
 	}
 
 	public boolean deletarEndereco(String email) {
-		String sql = "DELETE FROM EnderecoViaCep WHERE fk_usuario = ?";
+		String sql = "DELETE FROM Endereco WHERE fk_usuario = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, email);
 			ps.execute();
@@ -50,7 +50,7 @@ public class GerenciadorEndereco {
 	}
 
 	public boolean atualizarEndereco(Endereco endereco) {
-		String sql = "UPDATE EnderecoViaCep SET cidade = ?, rua = ?, uf = ? WHERE fk_usuario = ?";
+		String sql = "UPDATE Endereco SET cidade = ?, rua = ?, uf = ? WHERE fk_usuario = ?";
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, endereco.getCidade());
 			ps.setString(2, endereco.getRua());
@@ -67,7 +67,7 @@ public class GerenciadorEndereco {
 
 	public List<Endereco> listaEndereco() {
 		List<Endereco> enderecos = new ArrayList<>();
-		String sql = "SELECT * FROM EnderecoViaCep";
+		String sql = "SELECT * FROM Endereco";
 		try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
 				String fkUsuario = rs.getString("fk_usuario");

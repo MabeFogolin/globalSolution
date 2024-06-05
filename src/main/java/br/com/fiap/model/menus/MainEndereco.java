@@ -1,8 +1,12 @@
 package br.com.fiap.model.menus;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
 import br.com.fiap.beans.Endereco;
 import br.com.fiap.controller.GerenciadorEndereco;
@@ -16,11 +20,14 @@ public class MainEndereco {
 		this.gerenciadorEndereco = new GerenciadorEndereco();
 	}
 
+	
 	public void showMenu() throws SQLException {
 		String[] options = { "Adicionar Endereço", "Deletar Endereço", "Atualizar Endereço", "Listar Endereços",
 				"Sair" };
 		int selectedOptionIndex;
 		do {
+			UIManager.put("OptionPane.minimumSize", new Dimension(500, 50));
+			UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("SanSerif", Font.ROMAN_BASELINE, 18)));
 			selectedOptionIndex = JOptionPane.showOptionDialog(null, "Escolha uma opção:", "Menu de Endereços",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
@@ -92,5 +99,15 @@ public class MainEndereco {
 				break;
 			}
 		} while (selectedOptionIndex != 4);
+	}
+	public static void main(String[] args) throws ClassNotFoundException {
+		try {
+			MainEndereco main = new MainEndereco();
+			main.showMenu();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro ao conectar ao banco de dados", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		
 	}
 }

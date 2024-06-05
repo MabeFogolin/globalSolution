@@ -1,17 +1,26 @@
 package br.com.fiap.model.menus;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
 
+import br.com.fiap.beans.Endereco;
+import br.com.fiap.beans.EnderecoViaCep;
 import br.com.fiap.beans.Usuario;
+import br.com.fiap.controller.GerenciadorEndereco;
 import br.com.fiap.controller.GerenciadorUsuario;
-
+import br.com.fiap.services.ViacepService;
 
 public class MainUsuario {
 
 	private GerenciadorUsuario gerenciadorUsuario;
+	private GerenciadorEndereco gerenciadorEndereco;
 
 	public MainUsuario() throws ClassNotFoundException, SQLException {
 		this.gerenciadorUsuario = new GerenciadorUsuario();
@@ -21,36 +30,43 @@ public class MainUsuario {
 		String[] options = { "Adicionar Usuario", "Deletar Usuario", "Atualizar Usuario", "Listar Usuarios", "Sair" };
 		int selectedOptionIndex;
 		do {
+			UIManager.put("OptionPane.minimumSize", new Dimension(500, 50));
+			UIManager.put("OptionPane.messageFont", new FontUIResource(new Font("SanSerif", Font.ROMAN_BASELINE, 18)));
 			selectedOptionIndex = JOptionPane.showOptionDialog(null, "Escolha uma opção:", "Menu de Usuário",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
 			switch (selectedOptionIndex) {
 			case 0: {
-
 				String userNome = JOptionPane.showInputDialog(null, "Informe o nome do usuário:");
 				int userIdade = Integer.parseInt(JOptionPane.showInputDialog(null, "Informe a idade do usuário:"));
 				String userEmail = JOptionPane.showInputDialog(null, "Informe o email do usuário:");
 				String userSenha = JOptionPane.showInputDialog(null, "Informe a senha do usuário:");
-				long userCep = Long.parseLong(JOptionPane.showInputDialog(null, "Informe o CEP do usuário:"));
+				String userCep = JOptionPane.showInputDialog(null, "Informe o CEP do usuário:");
 				int fkOceanis = 1;
 
 				if (userIdade >= 14) {
-					Usuario user = new Usuario(userNome, userIdade, userEmail, userSenha, userCep, fkOceanis);
-					if (gerenciadorUsuario.adicionarUsuario(user)) {
-						JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso!", null,
-								JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						JOptionPane.showMessageDialog(null, "Erro ao adicionar o menu", "Erro",
-								JOptionPane.ERROR_MESSAGE);
-					}
-					break;
+				    Usuario user = new Usuario(userNome, userIdade, userEmail, userSenha, userCep, fkOceanis);
+				    Endereco endereco = cadastrarEnderecoViaCep(user); 
+				    if (endereco != null) {
+				        gerenciadorEndereco.adicionarEndereco(endereco);
+				        if (gerenciadorUsuario.adicionarUsuario(user)) {
+				            JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso!", null,
+				                    JOptionPane.INFORMATION_MESSAGE);
+				        } else {
+				            JOptionPane.showMessageDialog(null, "Erro ao adicionar o menu", "Erro",
+				                    JOptionPane.ERROR_MESSAGE);
+				        }
+				    } else {
+				        JOptionPane.showMessageDialog(null, "Erro ao cadastrar o endereço", "Erro",
+				                JOptionPane.ERROR_MESSAGE);
+				    }
+				    break;
 				} else {
-					JOptionPane.showMessageDialog(null,
-							"Erro ao adicionar o Usuário, o site não permite criação de usuários menores de 14 anos",
-							"Erro", JOptionPane.ERROR_MESSAGE);
+				    JOptionPane.showMessageDialog(null,
+				            "Erro ao adicionar o Usuário, o site não permite criação de usuários menores de 14 anos",
+				            "Erro", JOptionPane.ERROR_MESSAGE);
 				}
 				break;
-
 			}
 
 			case 1: {
@@ -68,7 +84,7 @@ public class MainUsuario {
 				String userNome = JOptionPane.showInputDialog(null, "Informe o novo nome do usuário: ");
 				int idade = Integer
 						.parseInt(JOptionPane.showInputDialog(null, "Informe a nova idade a ser atualizada:"));
-				long userCep = Long.parseLong(JOptionPane.showInputDialog(null, "Informe o novo CEP do usuário:"));
+				String userCep = JOptionPane.showInputDialog(null, "Informe o novo CEP do usuário:");
 
 				Usuario user = new Usuario(userNome, idade, userEmail, userCep);
 				if (gerenciadorUsuario.atualizarUsuario(user)) {
@@ -102,6 +118,26 @@ public class MainUsuario {
 			}
 		} while (selectedOptionIndex != 4);
 	}
+
+	public Endereco cadastrarEnderecoViaCep(Usuario usuario) {
+		Endereco endereco = null;
+		ViacepService viacepService = new ViacepService();
+		try {
+			EnderecoViaCep enderecoViaCep = viacepService.getEnderecoViaCep(usuario.getUserCep());
+
+			endereco = new Endereco();
+			endereco.setFkUsuario(usuario.getUserEmail());
+			endereco.setCidade(enderecoViaCep.getLocalidade());
+			endereco.setRua(enderecoViaCep.getLogradouro());
+			endereco.setUf(enderecoViaCep.getUf());
+
+			return endereco;
+		} catch (IOException e) {
+			System.err.println("Erro ao buscar o endereço via CEP: " + e.getMessage());
+			return null;
+		}
+	}
+
 
 	public static void main(String[] args) throws ClassNotFoundException {
 		try {

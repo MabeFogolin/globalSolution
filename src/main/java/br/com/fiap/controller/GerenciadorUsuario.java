@@ -34,7 +34,7 @@ public class GerenciadorUsuario {
 			ps.setInt(2, usuario.getUserIdade());
 			ps.setString(3, usuario.getUserEmail());
 			ps.setString(4, usuario.getUserSenha());
-			ps.setLong(5, usuario.getUserCep());
+			ps.setString(5, usuario.getUserCep());
 			ps.setInt(6, usuario.getFkOceanis());
 			ps.executeUpdate();
 		} catch (SQLIntegrityConstraintViolationException erroIntegridade) {
@@ -57,7 +57,7 @@ public class GerenciadorUsuario {
 	}
 
 	public boolean deletarUsuario(String email) {
-		String sqlFilho = "DELETE FROM EnderecoViaCep WHERE fk_usuario = ?";
+		String sqlFilho = "DELETE FROM Endereco WHERE fk_usuario = ?";
 		String sql = "DELETE FROM Usuario WHERE user_email = ?";
 		try {
 			PreparedStatement psFilho = conn.prepareStatement(sqlFilho);
@@ -85,7 +85,7 @@ public class GerenciadorUsuario {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, usuario.getUserNome());
 			ps.setInt(2, usuario.getUserIdade());
-			ps.setLong(3, usuario.getUserCep());
+			ps.setString(3, usuario.getUserCep());
 			ps.setString(4, usuario.getUserEmail());
 			ps.executeUpdate();
 
@@ -116,7 +116,7 @@ public class GerenciadorUsuario {
 				String userNome = rs.getString("user_nome");
 				int userIdade = rs.getInt("user_idade");
 				String userEmail = rs.getString("user_email");
-				long userCep = rs.getLong("user_cep");
+				String userCep = rs.getString("user_cep");
 
 				Usuario usuario = new Usuario(userNome, userIdade, userEmail, userCep);
 				usuarios.add(usuario);
@@ -152,15 +152,17 @@ public class GerenciadorUsuario {
 	}
 	
 	public Login validarLogin(String email, String senha) throws SQLException {
-		String sql = "SELECT user_email, user_senha FROM Usuario WHERE email = ? ";
+		String sql = "SELECT user_email, user_senha FROM Usuario WHERE user_email = ? and user_senha = ?";
 	    Login login = null;
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, email);
+			ps.setString(2, senha);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 	            login = new Login();
-	            login.setEmail(rs.getString("email"));
-	            login.setSenha(rs.getString("senha"));
+	            login.setEmail(rs.getString("user_email"));
+	            login.setSenha(rs.getString("user_senha"));
 	            // Preencha outros campos de acordo com a sua necessidade
 	        }
 	    } catch (SQLException se) {
@@ -178,7 +180,7 @@ public class GerenciadorUsuario {
 	    Endereco endereco = null;
 	    ViacepService viacepService = new ViacepService();
 	    try {
-	      EnderecoViaCep enderecoViaCep = viacepService.getEnderecoViaCep(String.valueOf(usuario.getUserCep()));
+	      EnderecoViaCep enderecoViaCep = viacepService.getEnderecoViaCep(usuario.getUserCep());
 	        
 	        // Preenchendo os dados do EnderecoViaCep conforme a classe EnderecoViaCep fornecida
 	        endereco = new Endereco();

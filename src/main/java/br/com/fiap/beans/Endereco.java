@@ -51,7 +51,7 @@ public class Endereco {
 	}
 	@Override
 	public String toString() {
-		return "EnderecoViaCep: \nUsuario=" + fkUsuario + "\nCidade: " + cidade + "\nRua: " + rua + "\nUF: " + uf + "\n";
+		return "Endereco: \nUsuario: " + fkUsuario + "\nCidade: " + cidade + "\nRua: " + rua + "\nUF: " + uf + "\n";
 	}
 	
 
